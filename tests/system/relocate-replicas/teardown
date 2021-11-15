@@ -1,0 +1,1 @@
+ham4db-client -c relocate-replicas -i 127.0.0.1:10112 -d 127.0.0.1:10111

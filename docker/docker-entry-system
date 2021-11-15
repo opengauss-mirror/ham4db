@@ -1,0 +1,43 @@
+#!/bin/bash
+
+echo "export PS1=\"\\[\\e[0;33m\\]\\h \\[\\e[0;97m\\]\\w\\[\\e[0;37m\\]\\\$ \"" >> /etc/bash.bashrc
+echo "alias redeploy-ci-env='(cd /ham4db/ham4db-ci-env ; ./script/docker-entry)'" >> /etc/bash.bashrc
+
+echo "setting up ham4db..."
+sudo cp etc/systemd/ham4db.service /etc/systemd/system/
+sudo mkdir -p /usr/local/ham4db
+sudo cp bin/ham4db /usr/local/ham4db/
+sudo cp -R resources /usr/local/ham4db/
+sudo cp resources/bin/ham4db-client /usr/bin
+sudo cp tests/system/ham4db-ci-system.conf.json /etc/ham4db.conf.json
+
+echo "starting ham4db service..."
+sudo systemctl daemon-reload
+sudo systemctl start ham4db
+sudo systemctl status ham4db
+echo "checking if service is healthy..."
+ham4db-client -c api -path status | jq .Detail.Healthy
+
+echo "Sleeping gracefully to let ham4db detect the topology..."
+sleep 20
+
+echo ""
+echo "==============================================="
+echo "Welcome to ham4db system test environment"
+echo "==============================================="
+echo ""
+echo "- ham4db config file is at /etc/ham4db.conf.json"
+echo "- Consul is running on standard port :8500"
+echo "- There is a MySQL cluster named 'ci' up and running."
+echo "  MySQL nodes are accessible with username 'ci', password 'ci' at ports :10111-:10114"
+echo "- HAProxy routes traffic to MySQL master on port :13306"
+echo ""
+echo "Here's how to invoke ham4db-client:"
+echo "---"
+echo ""
+echo "ham4db-client -c list-cluster-alias"
+ham4db-client -c list-cluster-alias
+echo "ham4db-client -c topology -alias ci"
+ham4db-client -c topology -alias ci
+echo "---"
+echo ""

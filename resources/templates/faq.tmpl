@@ -1,0 +1,116 @@
+<!--
+	Copyright 2021 SANGFOR TECHNOLOGIES
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      FAQ
+    </div>
+    <div class="panel-body">
+      <p>
+        <strong>Who should use ham4db?</strong>
+      </p>
+      <p>
+        DBAs and ops who have more than a mere master-replica replication topology.
+      </p>
+      <p>
+        <strong>Is this yet another monitoring tool?</strong>
+      </p>
+      <p>
+        No. <i>Ham4db</i> is strictly NOT a monitoring tool. There is no intention to make it so; no alerts or emails. It does provide with online visualization of your topology status though, and requires some thresholds of its own in order to
+        manage the topology.
+      </p>
+      <p>
+        <strong>What kind of replication does ham4db support?</strong>
+      </p>
+      <p>
+        <i>Ham4db</i> supports "plain-old-MySQL-replication", the one that uses binary log files and positions. If you don't know what you're using, this is probably the one. It is the only type of replication up to and including MySQL 5.5.
+      </p>
+      <p>
+        <strong>Does ham4db support Row Based Replication?</strong>
+      </p>
+      <p>
+        Yes. Statement Based Replication and Row Based Replication are both supported (and are in fact irrelevant)
+      </p>
+      <p>
+        <strong>Does ham4db support Master-Master (ring) Replication?</strong>
+      </p>
+      <p>
+        Yes, for a ring of two masters (active-active, active-passive). Do note that the tree visualization cannot present the circular replication, and will pick an arbitrary master as the root of the tree.
+      </p>
+      <p>
+        Master-Master-Master[-Master...] topologies, where the ring is composed of 3 or more masters are not supported and not tested. And are discouraged. And are an abomination.
+      </p>
+      <p>
+        <strong>Does ham4db support Galera Replication?</strong>
+      </p>
+      <p>
+        Yes and no. <i>Ham4db</i> is unaware of Galera replication. If you have three Galera masters and different replica topologies under each master, then <i>ham4db</i> sees these as three different topologies.
+      </p>
+      <p>
+        <strong>Does ham4db support GTID Replication?</strong>
+      </p>
+      <p>
+        Not at this stage. This is mainly because the developers of <i>ham4db</i> feel GTID is not yet complete, and are anyhow not using a MySQL which supports GTID. It is likely that GTID will be supported in the future.
+      </p>
+      <p>
+        <strong>Does ham4db support Parallel Replication?</strong>
+      </p>
+      <p>
+        No. This is because <code>START SLAVE UNTIL</code> is not supported in parallel replication, and output of
+        <code>SHOW SLAVE STATUS</code> is incomplete. There is no expected work on this.
+      </p>
+      <p>
+        <strong>Does ham4db support Multi-Master Replication?</strong>
+      </p>
+      <p>
+        No. Multi Master Replication (e.g. as in MariaDB 10.0) is not supported.
+      </p>
+      <p>
+        <strong>Does ham4db support Tungsten Replication?</strong>
+      </p>
+      <p>
+        No.
+      </p>
+      <p>
+        <strong>Does ham4db support Yet Another Type of Replication?</strong>
+      </p>
+      <p>
+        No.
+      </p>
+      <p>
+        <strong>Does ham4db support...</strong>
+      </p>
+      <p>
+        No.
+      </p>
+      <p>
+        <strong>Is ham4db open source?</strong>
+      </p>
+      <p>
+        Yes.
+        <i>Ham4db</i> is released as open source under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a> and is available at:
+        <a href="https://gitee.com/opengauss/ham4db">https://gitee.com/opengauss/ham4db</a>
+      </p>
+      <p>
+        <strong>Who develops ham4db and why?</strong>
+      </p>
+      <p>
+        <i>Ham4db</i> is developed by SANGFOR TECHNOLOGIES at <a href="http://github.com">GitHub</a>
+      </p>
+    </div>
+  </div>
+</div>

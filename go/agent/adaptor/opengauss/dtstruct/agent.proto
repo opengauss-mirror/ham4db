@@ -1,0 +1,126 @@
+// Copyright 2014 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package dtstruct;
+option go_package = "./;dtstruct";
+
+// BaseInfo instance basic info
+message BaseInfo {
+    string node_name = 1;
+    string node_ip = 2;
+
+    string data_path = 5;
+    int32 datanode_port = 6;
+
+    string instance_id = 10;
+    string instance_role = 11;
+    string instance_state = 12;
+    string ha_state = 13;
+
+    string gauss_version = 20;
+    string gs_cluster_name = 30;
+}
+
+// node sync info
+message SyncInfo {
+    string local_role = 1;
+    string state = 2;
+    string sender_sent_location = 10;
+    string sender_write_location = 11;
+    string sender_flush_location = 12;
+    string sender_replay_location = 13;
+    string receiver_received_location = 14;
+    string receiver_write_location = 15;
+    string receiver_flush_location = 16;
+    string receiver_replay_location = 17;
+    int32 sync_percent = 30;
+    string sync_state = 31;
+    string sync_mode = 32;
+    string channel = 50;
+}
+
+// node info include basic and sync
+message NodeInfo {
+    BaseInfo base_info = 1;
+    SyncInfo sync_info = 2;
+    BaseInfo upstream = 3;
+    repeated BaseInfo downstream_list = 4;
+}
+
+// ActionType all action type supported now
+enum ActionType {
+    FAILOVER = 0;
+    SWITCHOVER = 1;
+    START = 10;
+    START_BY_PRIMARY = 11;
+    START_BY_STANDBY = 12;
+    START_BY_CASCADE = 13;
+    START_BY_PENDING = 14;
+    START_CLUSTER = 15;
+    STOP = 20;
+    RESTART = 23;
+    BUILD = 30;
+    BUILD_BY_PRIMARY = 31;
+    BUILD_BY_STANDBY = 32;
+    BUILD_BY_CASCADE = 33;
+}
+
+// DatabaseInfoRequest used in CollectInfo rpc
+message DatabaseInfoRequest {
+    bool from_cache = 1; // get info from cache or not
+}
+
+// DatabaseInfoResponse used as CollectInfo rpc response
+message DatabaseInfoResponse {
+    NodeInfo node_info = 1;
+}
+
+// ManageActionRequest used in ManageAction rpc
+message ManageActionRequest {
+    ActionType action_type = 1;
+}
+
+// ManageActionResponse used as ManageAction rpc response
+message ManageActionResponse {
+    string data = 1;
+}
+
+// UpdateSyncConfigRequest used for UpdateSyncConfig rpc
+message UpdateSyncConfigRequest {
+    string sync_conf = 1; // sync config
+}
+
+// UpdateSyncConfigResponse used as UpdateSyncConfig rpc response
+message UpdateSyncConfigResponse {
+    string sync_standby = 1; // cluster sync config currently
+}
+
+// ReplicationConfirmRequest used for ReplicationConfirm rpc
+message ReplicationConfirmRequest {
+    string confirm_nodename = 1; // nodename of replication peer
+    bool upstream = 2; // upstream or downstream
+}
+
+// ReplicationConfirmResponse used as ReplicationConfirm rpc response
+message ReplicationConfirmResponse {
+    bool normal = 1; // replication is normal or not
+}
+
+// OpengaussAgent is the agent for opengauss
+service OpengaussAgent {
+
+    // collect opengauss base info
+    rpc CollectInfo (DatabaseInfoRequest) returns (DatabaseInfoResponse) {}
+
+    // manage opengauss, such as start/stop/build...
+    rpc ManageAction (ManageActionRequest) returns (ManageActionResponse) {}
+
+    // update opengauss sync config
+    rpc UpdateSyncConfig (UpdateSyncConfigRequest) returns (UpdateSyncConfigResponse) {}
+
+    // update opengauss sync config
+    rpc ReplicationConfirm (ReplicationConfirmRequest) returns (ReplicationConfirmResponse) {}
+}

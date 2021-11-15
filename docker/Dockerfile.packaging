@@ -1,0 +1,31 @@
+# Requires Docker 17.09 or later (multi stage builds)
+#
+# Ham4db will look for a configuration file at /etc/ham4db.conf.json.
+# It will listen on port 3000.
+# If not present a minimal configuration will be generated using the following environment variables:
+#
+# Default variables which can be used are:
+#
+# ORC_TOPOLOGY_USER (default: ham4db): username used by ham4db to login to MySQL when polling/discovering
+# ORC_TOPOLOGY_PASSWORD (default: ham4db):  password needed to login to MySQL when polling/discovering
+# ORC_DB_HOST (default: ham4db):  ham4db backend MySQL host
+# ORC_DB_PORT (default: 3306):  port used by ham4db backend MySQL server
+# ORC_DB_NAME (default: ham4db): database named used by ham4db backend MySQL server
+# ORC_USER (default: orc_server_user): username used to login to ham4db backend MySQL server
+# ORC_PASSWORD (default: orc_server_password): password used to login to ham4db backend MySQL server
+
+FROM golang:1.14.4-stretch
+
+RUN apt-get update
+RUN apt-get install -y ruby ruby-dev rubygems build-essential
+RUN gem install --no-ri --no-rdoc fpm
+ENV GOPATH=/tmp/go
+
+RUN apt-get install -y curl rsync gcc g++ bash git tar rpm
+
+RUN mkdir -p $GOPATH/src/gitee.com/opengauss/ham4db
+WORKDIR $GOPATH/src/gitee.com/opengauss/ham4db
+COPY . .
+RUN bash build.sh -b -P
+RUN bash build.sh -R -N -i sysv
+RUN bash build.sh -R -N -i systemd

@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Usage:
+# dock <test|alpine|pkg|hub|system> [arg]
+#   dock test:                build ham4db & run unit and integration tests
+#   dock alpine:              build and run ham4db on alpine linux
+#   dock hub:                 build hub.docker.com image with latest tag
+#   dock pkg [target-path]:   build ham4db release packages and copy to target path (default path: /tmp/ham4db-release)
+#   dock system:              create and run a system test environment
+#   dock raft:                build and run ham4db in a 3-node raft setup
+
+command="$1"
+
+case "$command" in
+  "test")
+    docker_target="ham4db-test"
+    docker build . -f docker/Dockerfile.test -t "${docker_target}" && docker run --rm -it "${docker_target}:latest"
+    ;;
+  "alpine")
+    docker_target="ham4db-alpine"
+    docker build . -f docker/Dockerfile -t "${docker_target}" && docker run --rm -it -p 3000:3000 "${docker_target}:latest"
+    ;;
+  "hub")
+    tag="$(git describe --tags --abbrev=0)"
+    if [ -z "$tag" ] ; then
+      echo "Cannot find latest tag"
+      exit 1
+    fi
+    docker build . -f docker/Dockerfile -t "openarkcode/ham4db:${tag}"
+    ;;
+  "pkg")
+    packages_path="${2:-/tmp/ham4db-release}"
+    docker_target="ham4db-packaging"
+    docker build . -f docker/Dockerfile.packaging -t "${docker_target}" && docker run --rm -it -v "${packages_path}:/tmp/pkg" "${docker_target}:latest" bash -c 'find /tmp/ham4db-release/ -maxdepth 1 -type f | xargs cp -t /tmp/pkg'
+    echo "packages generated on ${packages_path}:"
+    ls -l "${packages_path}"
+    ;;
+  "system")
+    docker_target="ham4db-system"
+    docker build . -f docker/Dockerfile.system -t "${docker_target}" && docker run --rm -it -p 3000:3000 "${docker_target}:latest"
+    ;;
+  "raft")
+    docker_target="ham4db-raft"
+    docker build . -f docker/Dockerfile.raft -t "${docker_target}" && docker run --rm -it -p 3007:3007 -p 3008:3008 -p 3009:3009 "${docker_target}:latest"
+    ;;
+  *)
+    >&2 echo "Usage: dock dock <test|alpine|packages|system|raft> [arg]"
+    exit 1
+esac

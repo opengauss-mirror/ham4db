@@ -1,0 +1,44 @@
+#!/bin/bash
+
+
+deploy_and_run_ham4db() {
+  local NODE_ID="$1"
+
+  echo "setting up ham4db-$NODE_ID..."
+
+  sudo mkdir -p "/tmp/ham4db-$NODE_ID"
+
+  sudo cp conf/ham4db-raft-env.conf.json "/etc/ham4db-$NODE_ID.conf.json"
+  sudo sed -i "/etc/ham4db-$NODE_ID.conf.json" -e "s/NODE_ID_PLACEHOLDER/$NODE_ID/g"
+
+  sudo cp etc/systemd/ham4db.service "/etc/systemd/system/ham4db-${NODE_ID}.service"
+  sudo sed -i "/etc/systemd/system/ham4db-${NODE_ID}.service" -e "s~/usr/local/ham4db/ham4db~/usr/local/ham4db/ham4db --config=/etc/ham4db-$NODE_ID.conf.json~g"
+
+  echo "starting ham4db-$NODE_ID service..."
+  sudo systemctl daemon-reload
+  sudo systemctl start "ham4db-$NODE_ID"
+  sudo systemctl status "ham4db-$NODE_ID"
+  echo "checking if service is healthy..."
+  ham4db-client -api "http://127.0.0.1:300$NODE_ID" -c api -path status | jq .Detail.Healthy
+}
+
+sudo mkdir -p /usr/local/ham4db
+sudo cp bin/ham4db /usr/local/ham4db/
+sudo cp -R resources /usr/local/ham4db/
+sudo cp resources/bin/ham4db-client /usr/bin
+
+for id in 7 8 9 ; do
+  deploy_and_run_ham4db "$id"
+done
+
+echo "export PS1=\"\\[\\e[0;33m\\]\\h \\[\\e[0;97m\\]\\w\\[\\e[0;37m\\]\\\$ \"" >> /etc/bash.bashrc
+echo 'export HAM4DB_API="http://127.0.0.1:3007/api http://127.0.0.1:3008/api http://127.0.0.1:3009/api"' | sudo tee /etc/profile.d/ham4db-client.sh
+
+echo ""
+echo "Here's how to invoke ham4db-client:"
+echo "---"
+echo ""
+echo "ham4db-client -c api -path status | jq ."
+ham4db-client -c api -path status | jq .
+echo "---"
+echo ""

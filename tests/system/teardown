@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "# Reloading configuration"
+ham4db-client -c api -path "reload-configuration" | jq -r '.Code'
+ham4db-client -c ack-all-recoveries --reason "system-tests"
+ham4db-client -c all-instances | while read i ; do
+  ham4db-client -c end-downtime -i $i
+  ham4db-client -c register-candidate -i $i --promotion-rule neutral
+done

@@ -1,0 +1,5 @@
+xxxx-yyyy-uuuu-xxxx-yyyy-zzzzz:mysql:testhost:22293     [unknown,unchecked,5.6,rw,STATEMENT,>>,P-GTID] [in_service,role=backup]
+- xxxx-yyyy-uuuu-xxxx-yyyy-zzzzz:mysql:testhost:22294   [unknown,unchecked,5.6,rw,STATEMENT,>>,P-GTID] [role=delayed]
+  - xxxx-yyyy-uuuu-xxxx-yyyy-zzzzz:mysql:testhost:22295 [unknown,unchecked,5.6,rw,STATEMENT,>>,P-GTID] [in_service]
+- xxxx-yyyy-uuuu-xxxx-yyyy-zzzzz:mysql:testhost:22296   [unknown,unchecked,5.6,rw,nobinlog,P-GTID] []
+- xxxx-yyyy-uuuu-xxxx-yyyy-zzzzz:mysql:testhost:22297   [unknown,unchecked,5.6,rw,STATEMENT,>>,P-GTID] []

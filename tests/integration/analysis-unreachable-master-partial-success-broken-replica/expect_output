@@ -1,0 +1,2 @@
+xxxx-yyyy-uuuu-xxxx-yyyy-zzzzz:mysql:testhost:22293 (cluster mysql-test): UnreachableMaster
+xxxx-yyyy-uuuu-xxxx-yyyy-zzzzz:mysql:testhost:22294 (cluster mysql-test): FirstTierReplicaFailingToConnectToMaster
