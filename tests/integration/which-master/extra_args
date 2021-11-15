@@ -1,0 +1,1 @@
+-c instance-master-identify -i testhost:22295 -clstid 'xxxx-yyyy-uuuu-xxxx-yyyy-zzzzz'

@@ -1,0 +1,2 @@
+sleep 3
+ham4db-client -c topology -alias ci | cut -d'|' -f 1

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if [ ! -f ham4db-ci-env/script/deploy-replication ] ; then
+  echo "ERROR: teardown_redeploy indicated, but ham4db-ci-env not found"
+  test-refresh-connections
+  exit 1
+fi
+
+ham4db-client -c api -path "reload-configuration" | jq -r '.Code'
+
+echo "# Redeploying replication"
+(cd ham4db-ci-env && script/deploy-replication > $deploy_replication_file 2>&1)
+
+if ! test-refresh-connections ; then
+  echo "ERROR refreshing connections"
+  exit 1
+fi
+echo "# Discovering all instances"
+ham4db-client -c all-instances | while read i ; do
+  test-retry ham4db-client -c discover -i $i | grep -q . || echo "+ ERROR discovering $i"
+done
+ham4db-client -c submit-masters-to-kv-stores | egrep ':.*:'
+echo "# Validating replicas"
+test-retry bash -c 'sleep 2 ; ham4db-client -c repl-list-replica -i 127.0.0.1:10111 | wc -l | grep -q 3' || echo "+ ERROR validating replicas"
+ham4db-client -c submit-masters-to-kv-stores | egrep ':.*:'
+
+(cd ham4db-ci-env && script/run-heartbeat >> $deploy_replication_file 2>&1)
+sleep 2
+if ! mysql -uci -pci -h 127.0.0.1 --port=10111 -s -s -e "show create table test.heartbeat" > /dev/null ; then
+  echo "ERROR: cannot find heartbeat table"
+  cat $deploy_replication_file
+  exit 1
+fi
+
+if ! mysql -uci -pci -h 127.0.0.1 --port=10111 -s -s -e "select * from test.heartbeat" | grep -q . ; then
+  echo "ERROR: cannot read heartbeat value"
+  cat $deploy_replication_file
+  exit 1
+fi

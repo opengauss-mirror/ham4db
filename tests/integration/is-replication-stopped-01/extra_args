@@ -1,0 +1,1 @@
+-c repl-is-replication-stopped -i testhost:22294

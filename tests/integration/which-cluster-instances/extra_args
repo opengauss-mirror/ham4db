@@ -1,0 +1,1 @@
+-c repl-list-replica -i testhost:22293 -clstid 'xxxx-yyyy-uuuu-xxxx-yyyy-zzzzz'

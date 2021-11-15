@@ -1,0 +1,49 @@
+<!--
+	Copyright 2021 SANGFOR TECHNOLOGIES
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<style type="text/css">
+
+</style>
+
+<div class="container" id="seed">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Seeds
+    </div>
+    <div class="panel-body">
+      <div class="seed_details panel panel-default">
+        <div class="panel-heading">
+          Seed details
+        </div>
+        <table class="table table-condensed table-bordered table-striped ">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Id</th>
+              <th>Target host</th>
+              <th>Source host</th>
+              <th>Seed start time</th>
+              <th>Seed end time</th>
+            </tr>
+          </thead>
+          <tbody data-agent="seed_details"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{.prefix}}/js/seeds.js"></script>
+<script src="{{.prefix}}/js/seed-shared.js"></script>

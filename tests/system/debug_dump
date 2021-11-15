@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "# topology:"
+ham4db-client -c topology -alias ci
+echo "# replication-analysis:"
+ham4db-client -c replication-analysis
+if [ -f /etc/haproxy/haproxy.cfg ] ; then
+  echo "# haproxy"
+  cat /etc/haproxy/haproxy.cfg
+fi

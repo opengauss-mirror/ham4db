@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ham4db-client -c all-instances | while read i ; do
+  ham4db-client -c which-gtid-errant -i $i
+done | grep . || :

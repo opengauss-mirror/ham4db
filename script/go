@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+. script/bootstrap
+
+mkdir -p bin
+bindir="$PWD"/bin
+
+cd .gopath/src/gitee.com/opengauss/ham4db
+go "$@"

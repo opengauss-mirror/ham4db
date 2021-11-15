@@ -1,0 +1,1 @@
+ham4db-client -c recovery-replication-analysis | awk 'NF{ print $NF }'

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+export GOPATH="$PWD/.gopath"
+cd .gopath/src/gitee.com/opengauss/ham4db
+
+unit_tests() {
+  echo "# Running unit tests"
+  GO111MODULE=auto go test ./go/...
+}
+
+unit_tests

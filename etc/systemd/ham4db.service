@@ -1,0 +1,14 @@
+[Unit]
+Description=ham4db: HA manager for database
+Documentation=https://gitee.com/opengauss/ham4db
+After=syslog.target network.target mysqld.service mysql.service 
+
+[Service]
+Type=simple
+WorkingDirectory=/usr/local/ham4db
+ExecStart=/usr/local/ham4db/ham4db http
+EnvironmentFile=-/etc/sysconfig/ham4db
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

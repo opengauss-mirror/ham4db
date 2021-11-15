@@ -1,0 +1,22 @@
+FROM golang:1.14.4-stretch
+LABEL maintainer="openark@github.com"
+
+RUN apt-get update -q -y
+RUN apt-get install -y sudo haproxy python git jq rsync libaio1 libnuma1 mysql-client bsdmainutils less vim
+
+RUN mkdir /ham4db
+WORKDIR /ham4db
+
+RUN git clone https://gitee.com/opengauss/ham4db-ci-env.git # cache
+
+RUN (cd /ham4db/ham4db-ci-env && cp bin/linux/systemctl.py /usr/bin/systemctl)
+RUN (cd /ham4db/ham4db-ci-env && script/deploy-haproxy)
+RUN (cd /ham4db/ham4db-ci-env && script/deploy-consul)
+RUN (cd /ham4db/ham4db-ci-env && script/deploy-consul-template)
+RUN (cd /ham4db/ham4db-ci-env && script/deploy-heartbeat)
+
+WORKDIR /ham4db
+COPY . .
+RUN (cd /ham4db && script/build)
+
+CMD (cd /ham4db/ham4db-ci-env && script/docker-entry && cd /ham4db && docker/docker-entry-system && /bin/bash)

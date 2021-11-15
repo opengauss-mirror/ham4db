@@ -1,0 +1,1 @@
+-c repl-is-replication-stopped -i testhost:22294 -clstid 'xxxx-yyyy-uuuu-xxxx-yyyy-zzzzz'
